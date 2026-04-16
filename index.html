@@ -1,277 +1,1378 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYA | The Empire of ULG</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYA — ULG Server Owner</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --clr-bg: #06060f;
+  --clr-surface: #0d0d1a;
+  --clr-surface2: #13132b;
+  --clr-primary: #5865f2;
+  --clr-primary-glow: rgba(88,101,242,0.4);
+  --clr-gold: #ffd700;
+  --clr-gold-glow: rgba(255,215,0,0.3);
+  --clr-cyan: #00d4ff;
+  --clr-cyan-glow: rgba(0,212,255,0.25);
+  --clr-green: #23a55a;
+  --clr-text: #e8e8f0;
+  --clr-muted: #72767d;
+  --clr-border: rgba(255,255,255,0.07);
+  --font-head: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
 
-    <style>
-        :root {
-            --primary: #5865F2;
-            --accent: #00ffcc;
-            --gold: #ffcc00;
-            --bg: #050505;
-            --card: #111214;
-            --text: #ffffff;
-        }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: 'Cairo', sans-serif; 
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
+html { scroll-behavior: smooth; }
 
-        /* --- Intro Scene --- */
-        #intro-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer;
-        }
-        .intro-text {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 1.5rem; letter-spacing: 5px; text-align: center;
-            opacity: 0; color: #fff;
-        }
-        .glitch-load { font-family: monospace; color: var(--accent); margin-top: 20px; font-size: 0.9rem; }
+body {
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: default;
+}
 
-        /* --- Global Background --- */
-        .bg-vibe {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
-            z-index: -1;
-        }
+/* ─── PARTICLES ─── */
+#particles-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
 
-        /* --- Discord Section --- */
-        .main-wrapper { opacity: 0; transition: opacity 1.5s ease; }
-        .hero-section { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+/* ─── INTRO ─── */
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#intro.hidden { opacity: 0; visibility: hidden; }
 
-        .discord-profile {
-            width: 100%; max-width: 450px;
-            background: #232428; border-radius: 12px; overflow: hidden;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
-            position: relative; transition: 0.3s;
-        }
-        .discord-banner { height: 120px; background: linear-gradient(45deg, #202225, #5865f2); position: relative; }
-        .pfp-container { position: absolute; top: 70px; left: 20px; }
-        .pfp-container img {
-            width: 90px; height: 90px; border-radius: 50%; border: 6px solid #232428;
-            background: #000; object-fit: cover; cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        .pfp-container img:active { transform: scale(0.9); }
-        .status-circle {
-            position: absolute; bottom: 5px; right: 5px; width: 22px; height: 22px;
-            background: #23a55a; border: 4px solid #232428; border-radius: 50%;
-        }
-        .discord-body { padding: 60px 16px 16px; background: #111214; margin: 8px; border-radius: 8px; }
-        .d-username { font-size: 1.5rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .d-tag { color: #b5bac1; font-size: 0.9rem; margin-bottom: 12px; }
-        .badge-list { position: absolute; top: 130px; right: 20px; display: flex; gap: 6px; }
-        .d-badge { width: 24px; height: 24px; cursor: help; }
-        
-        .role-pill { background: rgba(88, 101, 242, 0.1); border: 1px solid var(--primary); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; }
+.intro-boot {
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 1.8vw, 14px);
+  color: var(--clr-cyan);
+  text-align: center;
+  line-height: 2;
+  letter-spacing: 0.08em;
+}
+.intro-boot .line {
+  display: block;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: bootLine 0.4s ease forwards;
+}
+.intro-boot .line:nth-child(1) { animation-delay: 0.2s; }
+.intro-boot .line:nth-child(2) { animation-delay: 0.7s; }
+.intro-boot .line:nth-child(3) { animation-delay: 1.2s; }
+.intro-boot .line:nth-child(4) { animation-delay: 1.7s; }
+.intro-boot .line:nth-child(5) { animation-delay: 2.2s; color: var(--clr-gold); font-weight: 700; }
 
-        /* --- Stats Grid --- */
-        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; margin: 50px auto; }
-        .stat-box {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-            padding: 30px; border-radius: 20px; text-align: center; position: relative; overflow: hidden;
-        }
-        .stat-box h4 { color: var(--accent); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
-        .stat-number { font-size: 2.2rem; font-weight: 900; margin: 10px 0; font-family: 'Syncopate'; }
-        .stat-rank { position: absolute; top: 10px; right: 10px; font-weight: bold; color: var(--gold); }
+@keyframes bootLine {
+  to { opacity: 1; transform: translateX(0); }
+}
 
-        /* --- Journey / Train Section --- */
-        .journey-section { padding: 100px 20px; background: rgba(0,0,0,0.3); }
-        .train-track { position: relative; max-width: 600px; margin: 0 auto; border-right: 2px dashed rgba(255,255,255,0.1); padding-right: 30px; }
-        .station { margin-bottom: 60px; position: relative; }
-        .station::after {
-            content: '\f238'; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            position: absolute; right: -42px; top: 0; background: var(--bg); color: var(--accent); font-size: 1.2rem;
-        }
-        .station-name { font-size: 1.2rem; color: #fff; opacity: 0.7; transition: 0.5s; }
-        .station.active .station-name { opacity: 1; color: var(--accent); transform: scale(1.1); }
-        
-        /* Final Station */
-        .final-station { text-align: center; margin-top: 100px; }
-        .crown-icon { font-size: 5rem; color: var(--gold); filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.5)); display: block; margin-bottom: 20px; }
+.intro-title {
+  font-family: var(--font-head);
+  font-size: clamp(36px, 8vw, 80px);
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  opacity: 0;
+  animation: introPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 3s forwards;
+  background: linear-gradient(135deg, #fff 30%, var(--clr-gold) 70%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 30px var(--clr-gold-glow));
+}
 
-        /* --- Quote --- */
-        .quote-wrap { text-align: center; padding: 100px 20px; font-style: italic; }
-        .quote-text { font-size: 1.8rem; color: var(--text); opacity: 0.8; }
+@keyframes introPop {
+  0%  { opacity: 0; transform: scale(0.5) rotateX(20deg); }
+  100%{ opacity: 1; transform: scale(1) rotateX(0deg); }
+}
 
-        /* --- Responsive --- */
-        @media (max-width: 768px) {
-            .glitch-title { font-size: 2.5rem; }
-            .stat-number { font-size: 1.6rem; }
-            .discord-profile { max-width: 90%; }
-        }
+.intro-bar-wrap {
+  width: min(400px, 80vw);
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeIn 0.3s ease 3.5s forwards;
+}
+.intro-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--clr-primary), var(--clr-cyan));
+  animation: loadBar 1.2s ease 3.6s forwards;
+  border-radius: 99px;
+}
+@keyframes loadBar { to { width: 100%; } }
 
-        /* Animations */
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(0, 255, 204, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0); } }
-        .pfp-glow { animation: pulse 2s infinite; }
-        
-        #secret-msg {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--accent); color: #000; padding: 20px; font-weight: 900;
-            z-index: 10000; display: none; border-radius: 10px; text-align: center;
-        }
-    </style>
+.intro-sub {
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 2vw, 13px);
+  color: var(--clr-muted);
+  letter-spacing: 0.2em;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 4.5s forwards;
+}
+
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* ─── MAIN CONTENT ─── */
+#main {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+#main.visible { opacity: 1; }
+
+/* ─── SECTION WRAPPER ─── */
+section {
+  position: relative;
+  padding: clamp(60px, 10vw, 120px) clamp(16px, 6vw, 80px);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ─── DISCORD PROFILE ─── */
+#discord-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding-top: clamp(80px, 15vh, 140px);
+}
+
+.discord-card {
+  width: min(480px, 95vw);
+  background: #18191c;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 0 60px var(--clr-primary-glow);
+  transform: translateY(60px);
+  opacity: 0;
+  transition: transform 1s cubic-bezier(0.34,1.26,0.64,1), opacity 1s ease;
+  position: relative;
+}
+.discord-card.reveal {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Banner */
+.dc-banner {
+  height: 100px;
+  background: linear-gradient(135deg, #1a1a3e 0%, #0a0a2e 40%, #1a0a3e 70%, #0d0d2e 100%);
+  position: relative;
+  overflow: hidden;
+}
+.dc-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(88,101,242,0.5) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(255,215,0,0.3) 0%, transparent 50%);
+  animation: bannerPulse 4s ease-in-out infinite alternate;
+}
+@keyframes bannerPulse {
+  from { opacity: 0.7; }
+  to   { opacity: 1; }
+}
+
+.dc-banner-particles { position: absolute; inset: 0; overflow: hidden; }
+.dc-banner-particles span {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: var(--clr-gold);
+  border-radius: 50%;
+  animation: floatUp 3s linear infinite;
+  opacity: 0;
+}
+.dc-banner-particles span:nth-child(1)  { left: 10%; animation-delay: 0s;   animation-duration: 3s; }
+.dc-banner-particles span:nth-child(2)  { left: 25%; animation-delay: 0.5s; animation-duration: 2.5s; }
+.dc-banner-particles span:nth-child(3)  { left: 40%; animation-delay: 1s;   animation-duration: 3.5s; }
+.dc-banner-particles span:nth-child(4)  { left: 55%; animation-delay: 1.5s; animation-duration: 2.8s; }
+.dc-banner-particles span:nth-child(5)  { left: 70%; animation-delay: 0.3s; animation-duration: 3.2s; }
+.dc-banner-particles span:nth-child(6)  { left: 85%; animation-delay: 0.8s; animation-duration: 2.6s; }
+.dc-banner-particles span:nth-child(7)  { left: 60%; animation-delay: 1.2s; animation-duration: 3.8s; }
+.dc-banner-particles span:nth-child(8)  { left: 30%; animation-delay: 0.6s; animation-duration: 2.9s; }
+
+@keyframes floatUp {
+  0%   { bottom: 0;    opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { bottom: 100%; opacity: 0; }
+}
+
+/* Avatar area */
+.dc-avatar-area {
+  position: relative;
+  padding: 0 16px;
+}
+.dc-avatar-wrap {
+  position: absolute;
+  top: -50px;
+  left: 16px;
+  width: 92px;
+  height: 92px;
+  cursor: pointer;
+  user-select: none;
+}
+.dc-avatar-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--clr-gold) 0deg,
+    var(--clr-cyan) 120deg,
+    var(--clr-primary) 240deg,
+    var(--clr-gold) 360deg
+  );
+  animation: spinRing 3s linear infinite;
+  filter: blur(1px);
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+
+.dc-avatar-ring2 {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: #18191c;
+}
+
+.dc-avatar-img {
+  position: relative;
+  z-index: 2;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 4px solid #18191c;
+  background: linear-gradient(135deg, #2c2f33, #1a1a2e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--clr-gold);
+  overflow: hidden;
+  text-shadow: 0 0 20px var(--clr-gold);
+  animation: avatarPulse 2s ease-in-out infinite;
+}
+.dc-avatar-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@keyframes avatarPulse {
+  0%,100% { box-shadow: 0 0 0 0 var(--clr-gold-glow), 0 0 20px var(--clr-primary-glow); }
+  50%      { box-shadow: 0 0 0 8px transparent, 0 0 40px var(--clr-primary-glow); }
+}
+
+.dc-status-dot {
+  position: absolute;
+  bottom: 6px; right: 6px;
+  width: 18px; height: 18px;
+  background: var(--clr-green);
+  border-radius: 50%;
+  border: 3px solid #18191c;
+  z-index: 3;
+  box-shadow: 0 0 8px var(--clr-green);
+  animation: statusPulse 1.5s ease-in-out infinite;
+}
+@keyframes statusPulse {
+  0%,100% { box-shadow: 0 0 8px var(--clr-green); }
+  50%      { box-shadow: 0 0 20px var(--clr-green); }
+}
+
+.dc-badges {
+  position: absolute;
+  top: -40px; right: 16px;
+  display: flex;
+  gap: 6px;
+}
+.dc-badge {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  position: relative;
+  cursor: default;
+}
+.dc-badge.crown {
+  background: linear-gradient(135deg, #ffd700, #ff9800);
+  box-shadow: 0 0 12px var(--clr-gold-glow);
+  animation: badgeBounce 2s ease-in-out infinite;
+}
+.dc-badge.shield {
+  background: linear-gradient(135deg, #5865f2, #7289da);
+  box-shadow: 0 0 12px var(--clr-primary-glow);
+}
+@keyframes badgeBounce {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+.dc-info-area {
+  padding: 52px 16px 16px;
+}
+
+.dc-displayname {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.dc-username {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--clr-muted);
+  margin-top: 2px;
+}
+
+.dc-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 12px 0;
+}
+
+.dc-status-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: #b9bbbe;
+}
+.dc-status-line .dot {
+  width: 8px; height: 8px;
+  background: var(--clr-green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--clr-green);
+  animation: statusPulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.dc-role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 10px;
+  background: rgba(255,215,0,0.12);
+  border: 1px solid rgba(255,215,0,0.3);
+  color: var(--clr-gold);
+  letter-spacing: 0.05em;
+}
+
+.dc-id-area {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--clr-muted);
+}
+.dc-id-area .label { color: #72767d; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
+.dc-id-area .val   { color: #dcddde; }
+
+/* Easter egg message */
+.egg-msg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  border-radius: 8px;
+}
+.egg-msg.show { opacity: 1; pointer-events: all; }
+.egg-msg-inner {
+  text-align: center;
+  padding: 32px;
+}
+.egg-msg-inner .egg-icon { font-size: 48px; margin-bottom: 16px; animation: eggPop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+.egg-msg-inner p {
+  font-family: var(--font-head);
+  font-size: clamp(14px, 3vw, 18px);
+  color: var(--clr-gold);
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+.egg-close {
+  margin-top: 20px;
+  padding: 8px 24px;
+  background: none;
+  border: 1px solid var(--clr-gold);
+  color: var(--clr-gold);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  transition: background 0.2s, color 0.2s;
+}
+.egg-close:hover { background: var(--clr-gold); color: #000; }
+@keyframes eggPop {
+  0% { transform: scale(0) rotate(-20deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* ─── STATS ─── */
+#stats-section {
+  text-align: center;
+}
+
+.sec-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--clr-cyan);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.sec-label.reveal { opacity: 1; transform: translateY(0); }
+
+.sec-title {
+  font-family: var(--font-head);
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  margin-bottom: 48px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
+}
+.sec-title.reveal { opacity: 1; transform: translateY(0); }
+.sec-title .gold { color: var(--clr-gold); }
+.sec-title .cyan { color: var(--clr-cyan); }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: 12px;
+  padding: 28px 20px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease;
+}
+.stat-card.reveal { opacity: 1; transform: translateY(0); }
+.stat-card:hover { box-shadow: 0 0 30px var(--clr-primary-glow); }
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--clr-primary), var(--clr-cyan));
+}
+
+.stat-card.gold-card::before { background: linear-gradient(90deg, var(--clr-gold), #ff9800); }
+.stat-card.gold-card:hover    { box-shadow: 0 0 30px var(--clr-gold-glow); }
+
+.stat-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.stat-num {
+  font-family: var(--font-head);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+.stat-num .dollar { color: var(--clr-gold); }
+.stat-num .hash   { color: var(--clr-cyan); }
+
+.stat-rank {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--clr-primary);
+  letter-spacing: 0.05em;
+}
+
+/* ─── JOURNEY ─── */
+#journey-section { text-align: center; }
+
+.journey-track {
+  position: relative;
+  margin-top: 48px;
+}
+
+.journey-line {
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--clr-primary), var(--clr-cyan), var(--clr-gold));
+  transform: translateX(-50%);
+  opacity: 0.3;
+}
+
+.journey-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.journey-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 0;
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  position: relative;
+}
+.journey-item:nth-child(even) {
+  flex-direction: row-reverse;
+  transform: translateX(40px);
+}
+.journey-item.reveal { opacity: 1; transform: translateX(0); }
+
+.journey-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  background: var(--clr-bg);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.journey-content {
+  flex: 1;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  text-align: left;
+  max-width: 380px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+.journey-content:hover { box-shadow: 0 0 20px var(--clr-primary-glow); }
+
+.journey-content::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+}
+
+.journey-rank-name {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.journey-desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--clr-muted);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+/* rank colors */
+.r0  { color: #7ec8e3; }
+.r1  { color: #5dade2; }
+.r2  { color: #2e86de; }
+.r3  { color: #a29bfe; }
+.r4  { color: #6c5ce7; }
+.r5  { color: #fd79a8; }
+.r6  { color: #e17055; }
+.r7  { color: #00b894; }
+.r8  { color: #fdcb6e; }
+.r9  { color: #e84393; }
+.r10 { color: #ff5252; }
+.r11 { color: #ff6b6b; }
+.r12 { color: var(--clr-gold); }
+
+/* ─── EMMA CARLIN ─── */
+#emma-section {
+  overflow: hidden;
+}
+
+.emma-card {
+  background: linear-gradient(135deg, var(--clr-surface) 0%, rgba(10,10,40,0.8) 100%);
+  border: 1px solid rgba(255,215,0,0.15);
+  border-radius: 16px;
+  padding: clamp(28px, 5vw, 56px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 48px);
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  box-shadow: 0 0 60px rgba(255,215,0,0.06);
+}
+.emma-card.reveal { opacity: 1; transform: scale(1); }
+.emma-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 20px,
+    rgba(255,215,0,0.015) 20px,
+    rgba(255,215,0,0.015) 21px
+  );
+}
+
+.emma-name {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 900;
+  color: var(--clr-gold);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 30px var(--clr-gold-glow);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.emma-sub {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--clr-muted);
+  letter-spacing: 0.15em;
+  margin-bottom: 24px;
+}
+
+.emma-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.emma-badge {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.emma-badge.b1 { background: rgba(255,215,0,0.15); color: var(--clr-gold); border: 1px solid rgba(255,215,0,0.3); }
+.emma-badge.b2 { background: rgba(0,212,255,0.1);  color: var(--clr-cyan); border: 1px solid rgba(0,212,255,0.3); }
+.emma-badge.b3 { background: rgba(88,101,242,0.15); color: #a5b4fc; border: 1px solid rgba(88,101,242,0.3); }
+
+.emma-quote-text {
+  font-family: var(--font-head);
+  font-size: clamp(16px, 2.5vw, 22px);
+  color: #fff;
+  line-height: 1.5;
+  font-style: italic;
+}
+.emma-quote-text::before { content: '"'; color: var(--clr-gold); font-size: 1.5em; line-height: 0; vertical-align: -0.3em; }
+.emma-quote-text::after  { content: '"'; color: var(--clr-gold); font-size: 1.5em; line-height: 0; vertical-align: -0.3em; }
+
+.emma-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.emma-avatar-big {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a1a3e, #2c2f33);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--clr-gold);
+  border: 3px solid rgba(255,215,0,0.3);
+  box-shadow: 0 0 40px var(--clr-gold-glow);
+  overflow: hidden;
+}
+.emma-avatar-big img { width: 100%; height: 100%; object-fit: cover; }
+
+.emma-stat-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.emma-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8px;
+  border: 1px solid var(--clr-border);
+}
+.emma-pill .pill-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+}
+.emma-pill .pill-val {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ─── CLOSING QUOTE ─── */
+#quote-section {
+  text-align: center;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.big-quote {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.big-quote-text {
+  font-family: var(--font-head);
+  font-size: clamp(22px, 4vw, 42px);
+  font-weight: 900;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+.big-quote-text.reveal { opacity: 1; transform: translateY(0); }
+.big-quote-text .hl { color: var(--clr-gold); }
+
+.big-quote-sub {
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--clr-muted);
+  letter-spacing: 0.2em;
+  opacity: 0;
+  transition: opacity 1s ease 0.3s;
+}
+.big-quote-sub.reveal { opacity: 1; }
+
+/* ─── FOOTER ─── */
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--clr-muted);
+  letter-spacing: 0.15em;
+  border-top: 1px solid var(--clr-border);
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── SCROLL INDICATOR ─── */
+.scroll-hint {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 100;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.scroll-hint.gone { opacity: 0; }
+.scroll-arrow {
+  width: 1px; height: 40px;
+  background: linear-gradient(180deg, transparent, var(--clr-cyan));
+  animation: scrollArrow 1.5s ease-in-out infinite;
+}
+@keyframes scrollArrow {
+  0%,100% { transform: scaleY(0); transform-origin: top; }
+  50%      { transform: scaleY(1); transform-origin: top; }
+}
+.scroll-hint-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--clr-cyan);
+  letter-spacing: 0.2em;
+  opacity: 0.6;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 600px) {
+  .emma-card { grid-template-columns: 1fr; }
+  .emma-visual { display: none; }
+  .journey-line { display: none; }
+  .journey-item, .journey-item:nth-child(even) {
+    flex-direction: column;
+    align-items: flex-start;
+    transform: translateY(20px);
+  }
+  .journey-item.reveal { transform: translateY(0); }
+  .journey-content { max-width: 100%; }
+}
+
+/* ─── GLITCH ─── */
+@keyframes glitch {
+  0%   { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 0); }
+  20%  { clip-path: inset(40% 0 40% 0); transform: translate(3px, 0); }
+  40%  { clip-path: inset(60% 0 20% 0); transform: translate(-3px, 0); }
+  60%  { clip-path: inset(10% 0 70% 0); transform: translate(3px, 0); }
+  80%  { clip-path: inset(70% 0 10% 0); transform: translate(-3px, 0); }
+  100% { clip-path: inset(0 0 0 0);     transform: translate(0, 0); }
+}
+
+</style>
 </head>
 <body>
 
-    <div id="intro-overlay" onclick="startExperience()">
-        <div class="intro-text" id="intro-1">"كل إمبراطورية... بدأت بقرار."</div>
-        <div class="intro-text" id="intro-2">وهنا... يُكتب الفصل الأول.</div>
-        <div class="glitch-load" id="loader">Click to Initialize System...</div>
+<!-- PARTICLES -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-boot">
+    <span class="line">▶ CONNECTING TO ULG DATABASE...</span>
+    <span class="line">▶ AUTHENTICATION: <span style="color:var(--clr-green)">GRANTED</span></span>
+    <span class="line">▶ RANK VERIFICATION: <span style="color:var(--clr-gold)">SERVER OWNER ✓</span></span>
+    <span class="line">▶ LOADING PROFILE DATA...</span>
+    <span class="line">▶ PROFILE FOUND — WELCOME</span>
+  </div>
+  <div class="intro-title">AYA</div>
+  <div class="intro-bar-wrap"><div class="intro-bar"></div></div>
+  <div class="intro-sub">ULG ROLEPLAY — SERVER OWNER</div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- SCROLL HINT -->
+  <div class="scroll-hint" id="scrollHint">
+    <div class="scroll-hint-text">SCROLL</div>
+    <div class="scroll-arrow"></div>
+  </div>
+
+  <!-- ── DISCORD PROFILE ── -->
+  <section id="discord-section">
+    <div class="discord-card" id="discordCard">
+      <!-- Easter egg overlay -->
+      <div class="egg-msg" id="eggMsg">
+        <div class="egg-msg-inner">
+          <div class="egg-icon">👑</div>
+          <p>"ULG wasn't built…<br>it was <span style="color:var(--clr-gold)">conquered.</span>"</p>
+          <button class="egg-close" onclick="document.getElementById('eggMsg').classList.remove('show')">CLOSE</button>
+        </div>
+      </div>
+
+      <!-- Banner -->
+      <div class="dc-banner">
+        <div class="dc-banner-particles">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Avatar + Badges -->
+      <div class="dc-avatar-area">
+        <div class="dc-avatar-wrap" id="avatarBtn" title="Click 3x for secret">
+          <div class="dc-avatar-ring"></div>
+          <div class="dc-avatar-ring2"></div>
+          <div class="dc-avatar-img" id="avatarImg">
+            A
+          </div>
+          <div class="dc-status-dot"></div>
+        </div>
+        <div class="dc-badges">
+          <div class="dc-badge crown" title="Server Owner">👑</div>
+          <div class="dc-badge shield" title="ULG Staff">🛡️</div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="dc-info-area">
+        <div class="dc-displayname">AYA</div>
+        <div class="dc-username">a.yy.a</div>
+        <div class="dc-divider"></div>
+        <div class="dc-status-line">
+          <span class="dot"></span>
+          <span>🟢 Online — Managing ULG Roleplay</span>
+        </div>
+        <div class="dc-role-tag">👑 Server Owner</div>
+        <div class="dc-divider"></div>
+        <div class="dc-id-area">
+          <div class="label">MEMBER ID</div>
+          <div class="val">852632104034762762</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATS ── -->
+  <section id="stats-section">
+    <div class="sec-label" data-reveal>PERFORMANCE METRICS</div>
+    <div class="sec-title" data-reveal>THE <span class="gold">NUMBERS</span><br>DON'T <span class="cyan">LIE</span></div>
+    <div class="stats-grid">
+
+      <div class="stat-card gold-card" data-reveal data-delay="0">
+        <span class="stat-icon">💰</span>
+        <div class="stat-label">Total Wealth</div>
+        <div class="stat-num">
+          <span class="dollar">$</span><span class="counter" data-target="128315553" data-format="money">0</span>
+        </div>
+        <div class="stat-rank">🥈 Rank #2 Richest</div>
+      </div>
+
+      <div class="stat-card" data-reveal data-delay="1">
+        <span class="stat-icon">⏱️</span>
+        <div class="stat-label">Active Hours</div>
+        <div class="stat-num">
+          <span class="counter" data-target="10372" data-format="plain">0</span>
+        </div>
+        <div class="stat-rank">🥇 Rank #1 Most Active</div>
+      </div>
+
+      <div class="stat-card" data-reveal data-delay="2">
+        <span class="stat-icon">👑</span>
+        <div class="stat-label">Server Role</div>
+        <div class="stat-num" style="font-size:clamp(16px,2.5vw,22px); color:var(--clr-gold);">Server Owner</div>
+        <div class="stat-rank">ULG Roleplay</div>
+      </div>
+
+      <div class="stat-card" data-reveal data-delay="3">
+        <span class="stat-icon">🎮</span>
+        <div class="stat-label">In-Game Identity</div>
+        <div class="stat-num" style="font-size:clamp(16px,2.5vw,20px); color:var(--clr-cyan);">Emma_Carlin</div>
+        <div class="stat-rank">Age: 23</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── JOURNEY ── -->
+  <section id="journey-section">
+    <div class="sec-label" data-reveal>THE RISE</div>
+    <div class="sec-title" data-reveal>FROM <span class="gold">ZERO</span><br>TO <span class="cyan">OWNER</span></div>
+    <div style="font-family:var(--font-mono);font-size:12px;color:var(--clr-muted);margin-bottom:48px;opacity:0;transition:opacity 0.6s ease 0.2s;" data-reveal-opacity>
+      "Every empire… starts with a decision."
     </div>
 
-    <div id="secret-msg">ULG WASN'T BUILT... IT WAS CONQUERED. 🛡️</div>
+    <div class="journey-track">
+      <div class="journey-line"></div>
+      <div class="journey-items">
 
-    <div class="main-wrapper" id="main-content">
-        <div class="bg-vibe"></div>
+        <div class="journey-item" data-reveal-j data-delay="0">
+          <div class="journey-dot r0"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r0">🚀 Tester Support</div>
+            <div class="journey-desc">The first step. Proving worth before earning rank. The train departs.</div>
+          </div>
+        </div>
 
-        <section class="hero-section">
-            <div class="discord-profile">
-                <div class="discord-banner"></div>
-                <div class="badge-list">
-                    <img src="https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadbravery.svg" class="d-badge">
-                    <img src="https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/activedeveloper.svg" class="d-badge">
-                </div>
-                <div class="pfp-container">
-                    <img src="aya.jpg" alt="AYA" class="pfp-glow" id="pfp" onclick="checkSecret()">
-                    <div class="status-circle"></div>
-                </div>
-                <div class="discord-body">
-                    <div class="d-username">AYA <span class="role-pill"><i class="fa-solid fa-crown"></i> Owner</span></div>
-                    <div class="d-tag">a.yy.a</div>
-                    
-                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-                        <p style="font-size: 0.8rem; color: #b5bac1; text-transform: uppercase; font-weight: bold; margin-bottom: 8px;">About Me</p>
-                        <p style="font-size: 0.9rem; line-height: 1.4;">Managing ULG Roleplay Server.<br>Character: <b>Emma_Carlin</b></p>
-                        <p style="font-size: 0.85rem; color: var(--accent); margin-top: 10px;"><i class="fa-solid fa-cake-candles"></i> Age: 23</p>
-                    </div>
-                </div>
-            </div>
+        <div class="journey-item" data-reveal-j data-delay="1">
+          <div class="journey-dot r1"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r1">⚡ Trial Support</div>
+            <div class="journey-desc">On probation. Every action watched. Every decision tested.</div>
+          </div>
+        </div>
 
-            <div class="stats-container">
-                <div class="stat-box">
-                    <div class="stat-rank">#2</div>
-                    <h4>Total Wealth</h4>
-                    <div class="stat-number" data-val="128315553">$0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-rank">#1</div>
-                    <h4>Total Hours</h4>
-                    <div class="stat-number" data-val="10372">0</div>
-                </div>
-            </div>
-        </section>
+        <div class="journey-item" data-reveal-j data-delay="2">
+          <div class="journey-dot r2"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r2">🛡️ Support</div>
+            <div class="journey-desc">Earned trust. Helping the community take shape.</div>
+          </div>
+        </div>
 
-        <section class="journey-section">
-            <h2 style="text-align:center; margin-bottom: 50px; font-family: 'Syncopate';">The Railway of Success</h2>
-            <div class="train-track" id="railway">
-                </div>
+        <div class="journey-item" data-reveal-j data-delay="3">
+          <div class="journey-dot r3"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r3">🌀 Trial Admin</div>
+            <div class="journey-desc">The leap to authority. New responsibilities. New power.</div>
+          </div>
+        </div>
 
-            <div class="final-station">
-                <i class="fa-solid fa-crown crown-icon" id="final-crown"></i>
-                <h2 style="font-size: 3rem; font-family: 'Syncopate';">SERVER OWNER</h2>
-                <p style="color: var(--accent);">The Destination Reached.</p>
-            </div>
-        </section>
+        <div class="journey-item" data-reveal-j data-delay="4">
+          <div class="journey-dot r4"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r4">⚔️ Admin</div>
+            <div class="journey-desc">Full administrative control. The server bends to the rules she enforces.</div>
+          </div>
+        </div>
 
-        <section class="quote-wrap">
-            <div class="quote-text">"البعض يركب القطار... ونحن من وضعنا السكة."</div>
-        </section>
+        <div class="journey-item" data-reveal-j data-delay="5">
+          <div class="journey-dot r5"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r5">🔥 Senior Admin</div>
+            <div class="journey-desc">Experience forged in decisions. Mentoring those below.</div>
+          </div>
+        </div>
+
+        <div class="journey-item" data-reveal-j data-delay="6">
+          <div class="journey-dot r6"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r6">🦅 Lead Admin</div>
+            <div class="journey-desc">Leading the admin team. Setting the standard for all.</div>
+          </div>
+        </div>
+
+        <div class="journey-item" data-reveal-j data-delay="7">
+          <div class="journey-dot r7"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r7">🏛️ Supervisor</div>
+            <div class="journey-desc">Overseeing operations. The engine of order runs through her hands.</div>
+          </div>
+        </div>
+
+        <div class="journey-item" data-reveal-j data-delay="8">
+          <div class="journey-dot r8"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r8">💫 Head Admin</div>
+            <div class="journey-desc">At the top of the staff hierarchy. Thousands depend on her judgment.</div>
+          </div>
+        </div>
+
+        <div class="journey-item" data-reveal-j data-delay="9">
+          <div class="journey-dot r9"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r9">🌟 Vice Founder</div>
+            <div class="journey-desc">Co-piloting the vision. The dream is no longer a dream.</div>
+          </div>
+        </div>
+
+        <div class="journey-item" data-reveal-j data-delay="10">
+          <div class="journey-dot r10"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r10">🖥️ Server Control</div>
+            <div class="journey-desc">Absolute technical dominion. Every bit, every byte, hers.</div>
+          </div>
+        </div>
+
+        <div class="journey-item" data-reveal-j data-delay="11">
+          <div class="journey-dot r11"></div>
+          <div class="journey-content">
+            <div class="journey-rank-name r11">🏗️ Server Founder</div>
+            <div class="journey-desc">She built this. Brick by brick. Hour by hour. Day by day.</div>
+          </div>
+        </div>
+
+        <div class="journey-item" data-reveal-j data-delay="12">
+          <div class="journey-dot r12"></div>
+          <div class="journey-content" style="border-color:rgba(255,215,0,0.3);background:linear-gradient(135deg,rgba(255,215,0,0.05),var(--clr-surface));box-shadow:0 0 30px var(--clr-gold-glow);">
+            <div class="journey-rank-name r12" style="font-size:18px;">👑 Server Owner</div>
+            <div class="journey-desc" style="color:rgba(255,215,0,0.7);">The crown descends. The train stops. The empire stands.<br><em>"The best don't just ride the train… they lay the tracks."</em></div>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </section>
 
-    <script>
-        const stations = [
-            "Tester support", "Trial Support", "Support", "Trial Admin", 
-            "Admin", "Senior Admin", "Lead Admin", "Supervisor", 
-            "Head Admin", "Vice founder", "Server control", "Server Founder"
-        ];
+  <!-- ── EMMA CARLIN ── -->
+  <section id="emma-section">
+    <div class="sec-label" data-reveal>IN-GAME IDENTITY</div>
+    <div class="sec-title" data-reveal>MEET <span class="gold">EMMA</span><br><span class="cyan">CARLIN</span></div>
+    <div class="emma-card" id="emmaCard">
+      <div>
+        <div class="emma-name">Emma_Carlin</div>
+        <div class="emma-sub">ULG ROLEPLAY — ACTIVE CHARACTER</div>
+        <div class="emma-badges">
+          <div class="emma-badge b1">🥈 #2 Richest</div>
+          <div class="emma-badge b2">⏱️ #1 Most Active</div>
+          <div class="emma-badge b3">👑 Server Owner</div>
+        </div>
+        <div class="emma-quote-text">Power isn't given… it's earned.</div>
+      </div>
+      <div class="emma-visual">
+        <div class="emma-avatar-big" id="emmaAvatar">A</div>
+        <div class="emma-stat-pills">
+          <div class="emma-pill">
+            <span class="pill-label">Net Worth</span>
+            <span class="pill-val" style="color:var(--clr-gold);">$128,315,553</span>
+          </div>
+          <div class="emma-pill">
+            <span class="pill-label">Active Hours</span>
+            <span class="pill-val" style="color:var(--clr-cyan);">10,372 hrs</span>
+          </div>
+          <div class="emma-pill">
+            <span class="pill-label">Role</span>
+            <span class="pill-val" style="color:#a5b4fc;">Server Owner</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        let clickCount = 0;
+  <!-- ── CLOSING QUOTE ── -->
+  <section id="quote-section">
+    <div class="big-quote">
+      <div class="big-quote-text" data-reveal>
+        The best don't just <span class="hl">ride the train</span>…<br>
+        they <span class="hl">lay the tracks.</span>
+      </div>
+      <div class="big-quote-sub" data-reveal-opacity>
+        — AYA | ULG ROLEPLAY | SERVER OWNER
+      </div>
+    </div>
+  </section>
 
-        function startExperience() {
-            // Intro Animation Sequence
-            const tl = gsap.timeline();
-            tl.to("#loader", {opacity: 0, duration: 0.5});
-            tl.to("#intro-1", {opacity: 1, duration: 1.5});
-            tl.to("#intro-1", {opacity: 0, duration: 1, delay: 1});
-            tl.to("#intro-2", {opacity: 1, duration: 1.5});
-            tl.to("#intro-overlay", {backgroundColor: "#fff", duration: 0.1, delay: 0.5});
-            tl.to("#intro-overlay", {opacity: 0, display: "none", duration: 1});
-            tl.to("#main-content", {opacity: 1, duration: 2}, "-=1");
+  <footer>
+    © AYA · ULG ROLEPLAY · DISCORD: a.yy.a · ID: 852632104034762762
+  </footer>
 
-            // Init Components
-            initStats();
-            initRailway();
-        }
+</div><!-- /main -->
 
-        function initStats() {
-            const counters = document.querySelectorAll('.stat-number');
-            counters.forEach(counter => {
-                const target = +counter.getAttribute('data-val');
-                const updateCount = () => {
-                    const current = +counter.innerText.replace(/[^0-9]/g, '');
-                    const inc = target / 100;
-                    if (current < target) {
-                        const val = Math.ceil(current + inc);
-                        counter.innerText = (counter.getAttribute('data-val').includes('128') ? '$' : '') + val.toLocaleString();
-                        setTimeout(updateCount, 20);
-                    } else {
-                        counter.innerText = (counter.getAttribute('data-val').includes('128') ? '$' : '') + target.toLocaleString();
-                    }
-                };
-                updateCount();
-            });
-        }
+<script>
+/* ─── PARTICLES ─── */
+(function() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
 
-        function initRailway() {
-            const container = document.getElementById('railway');
-            stations.forEach(s => {
-                const div = document.createElement('div');
-                div.className = 'station';
-                div.innerHTML = `<div class="station-name">${s}</div>`;
-                container.appendChild(div);
-            });
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
 
-            // GSAP Scroll Trigger for Stations
-            gsap.utils.toArray(".station").forEach(station => {
-                gsap.to(station, {
-                    scrollTrigger: {
-                        trigger: station,
-                        start: "top 80%",
-                        onEnter: () => station.classList.add('active')
-                    }
-                });
-            });
-            
-            gsap.from("#final-crown", {
-                scrollTrigger: { trigger: ".final-station", start: "top 70%" },
-                scale: 0, rotation: 360, duration: 1.5, ease: "back.out"
-            });
-        }
+  const colors = ['rgba(88,101,242,', 'rgba(0,212,255,', 'rgba(255,215,0,'];
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * 2000,
+      y: Math.random() * 2000,
+      r: Math.random() * 1.5 + 0.3,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: Math.random() * 0.5 + 0.1
+    });
+  }
 
-        function checkSecret() {
-            clickCount++;
-            if(clickCount === 3) {
-                const msg = document.getElementById('secret-msg');
-                msg.style.display = 'block';
-                setTimeout(() => { msg.style.display = 'none'; clickCount = 0; }, 3000);
-            }
-        }
-    </script>
+  let scrollY = 0;
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const offsetY = scrollY * 0.1;
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = 2000;
+      if (p.x > 2000) p.x = 0;
+      if (p.y < 0) p.y = 2000;
+      if (p.y > 2000) p.y = 0;
+
+      const sx = (p.x % W + W) % W;
+      const sy = ((p.y - offsetY) % H + H) % H;
+
+      ctx.beginPath();
+      ctx.arc(sx, sy, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + p.alpha + ')';
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ─── INTRO → MAIN ─── */
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    const intro = document.getElementById('intro');
+    const main  = document.getElementById('main');
+    intro.classList.add('hidden');
+    setTimeout(() => {
+      intro.style.display = 'none';
+      main.classList.add('visible');
+      triggerReveal();
+    }, 800);
+  }, 5200);
+});
+
+/* ─── EASTER EGG ─── */
+let clickCount = 0, clickTimer;
+document.getElementById('avatarBtn').addEventListener('click', function() {
+  clickCount++;
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+  if (clickCount >= 3) {
+    document.getElementById('eggMsg').classList.add('show');
+    clickCount = 0;
+  }
+});
+
+/* ─── SCROLL REVEAL ─── */
+function triggerReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        const target = el.target;
+        const delay  = parseFloat(target.dataset.delay || 0) * 120;
+        setTimeout(() => {
+          target.classList.add('reveal');
+        }, delay);
+        observer.unobserve(target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+  document.querySelectorAll('.stat-card').forEach(el => observer.observe(el));
+  document.querySelectorAll('[data-reveal-j]').forEach(el => observer.observe(el));
+
+  // Opacity-only reveals
+  const obsOpacity = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        el.target.style.opacity = '1';
+        obsOpacity.unobserve(el.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('[data-reveal-opacity]').forEach(el => obsOpacity.observe(el));
+
+  // Discord card
+  const obsCard = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        el.target.classList.add('reveal');
+        obsCard.unobserve(el.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  const discordCard = document.getElementById('discordCard');
+  if (discordCard) obsCard.observe(discordCard);
+  const emmaCard = document.getElementById('emmaCard');
+  if (emmaCard) obsCard.observe(emmaCard);
+
+  // Counters
+  const obsCounter = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        animateCounter(el.target);
+        obsCounter.unobserve(el.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.counter').forEach(el => obsCounter.observe(el));
+}
+
+/* ─── COUNTER ANIMATION ─── */
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const format = el.dataset.format;
+  const duration = 2500;
+  const start = performance.now();
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function fmt(n) {
+    if (format === 'money') {
+      return n.toLocaleString('en-US');
+    }
+    return n.toLocaleString('en-US');
+  }
+
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const val = Math.floor(easeOut(progress) * target);
+    el.textContent = fmt(val);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = fmt(target);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ─── SCROLL HINT ─── */
+window.addEventListener('scroll', function() {
+  const hint = document.getElementById('scrollHint');
+  if (window.scrollY > 100) hint.classList.add('gone');
+  else hint.classList.remove('gone');
+});
+
+/* ─── LOAD AVATAR IMAGE ─── */
+(function() {
+  // Try to load the uploaded image; fall back to initials
+  const img = new Image();
+  img.onload = function() {
+    const avatarEl = document.getElementById('avatarImg');
+    avatarEl.innerHTML = '<img src="' + img.src + '" alt="AYA">';
+    const emmaEl = document.getElementById('emmaAvatar');
+    if (emmaEl) emmaEl.innerHTML = '<img src="' + img.src + '" alt="AYA">';
+  };
+  // The file path from uploads
+  img.src = '/mnt/user-data/uploads/aya.jpg';
+})();
+</script>
 </body>
 </html>
