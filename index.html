@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AYA | ULG Owner Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #090a0f;
+            --glass-bg: rgba(20, 22, 30, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --discord-color: #5865F2;
+            --discord-dark: #232428;
+            --discord-darker: #111214;
+            --neon-accent: #00ffcc;
+            --gold-accent: #ffd700;
+            --text-main: #ffffff;
+            --text-muted: #a0a5b1;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 255, 204, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(88, 101, 242, 0.08), transparent 25%);
+            overflow-x: hidden;
+        }
+
+        /* Particles Background */
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* --- Header Section --- */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .glitch-title { font-size: 5rem; font-weight: 900; letter-spacing: 5px; text-transform: uppercase; background: linear-gradient(45deg, var(--discord-color), var(--neon-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; animation: glow 2s ease-in-out infinite alternate; }
+        .subtitle { font-size: 1.5rem; color: var(--text-muted); margin-top: 1rem; }
+        .typewriter-box { font-family: 'Poppins', sans-serif; font-size: 1.2rem; margin-top: 2rem; color: var(--neon-accent); min-height: 30px; }
+
+        /* --- Discord Profile Card --- */
+        .discord-wrapper { display: flex; justify-content: center; margin: 4rem 0; perspective: 1000px; }
+        .discord-card {
+            background: var(--discord-dark); width: 340px; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px var(--glass-border);
+            transform-style: preserve-3d; transition: transform 0.5s ease;
+        }
+        .discord-card:hover { transform: translateY(-10px) rotateX(5deg) rotateY(-5deg); box-shadow: 0 30px 50px rgba(0,255,204,0.1); }
+        .discord-banner { height: 120px; background: linear-gradient(135deg, var(--discord-color), #8a2be2); position: relative; }
+        .discord-avatar-wrapper { position: absolute; bottom: -45px; left: 20px; border: 6px solid var(--discord-dark); border-radius: 50%; background: var(--discord-darker); }
+        .discord-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; animation: pulse-ring 3s infinite; }
+        .status-dot { position: absolute; bottom: 5px; right: 5px; width: 20px; height: 20px; background: #23a559; border: 4px solid var(--discord-dark); border-radius: 50%; }
+        .discord-info { padding: 55px 20px 20px; background: var(--discord-darker); border-radius: 8px; margin: 16px; }
+        .discord-badges { position: absolute; top: 130px; right: 20px; display: flex; gap: 5px; }
+        .badge { width: 22px; height: 22px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; justify-content: center; align-items: center; font-size: 12px; color: var(--gold-accent); }
+        .d-name { font-size: 1.4rem; font-weight: 700; color: #fff; font-family: 'Poppins', sans-serif; display: flex; align-items: center; gap: 5px; }
+        .d-user { font-size: 0.9rem; color: var(--text-muted); font-family: 'Poppins', sans-serif; }
+        .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 15px 0; }
+        .d-section h3 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
+        .d-desc { font-size: 0.9rem; color: #dbdee1; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;}
+        
+        /* --- In-Game Stats --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 4rem 0; }
+        .stat-card {
+            background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border);
+            padding: 2.5rem; border-radius: 20px; text-align: center; position: relative; overflow: hidden;
+            transition: 0.4s;
+        }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--neon-accent); transform: scaleX(0); transition: 0.4s; origin: left; }
+        .stat-card:hover::before { transform: scaleX(1); }
+        .stat-card:hover { transform: translateY(-5px); background: rgba(30, 34, 45, 0.8); }
+        .stat-icon { font-size: 2.5rem; color: var(--gold-accent); margin-bottom: 1rem; }
+        .stat-title { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .stat-value { font-size: 2.5rem; font-weight: 900; font-family: 'Poppins', sans-serif; background: linear-gradient(to right, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .rank-badge { position: absolute; top: 15px; right: 15px; background: rgba(255,215,0,0.1); color: var(--gold-accent); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-family: 'Poppins', sans-serif; border: 1px solid rgba(255,215,0,0.3); }
+
+        /* --- Timeline Section --- */
+        .timeline-section { margin: 6rem 0; padding-top: 2rem; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 4rem; position: relative; display: inline-block; left: 50%; transform: translateX(-50%); }
+        .section-title::after { content: ''; position: absolute; bottom: -10px; left: 25%; width: 50%; height: 3px; background: var(--neon-accent); border-radius: 5px; box-shadow: 0 0 10px var(--neon-accent); }
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+        .timeline::after { content: ''; position: absolute; width: 4px; background: rgba(255,255,255,0.05); top: 0; bottom: 0; left: 50%; margin-left: -2px; border-radius: 4px; }
+        .tl-item { padding: 10px 40px; position: relative; background-color: inherit; width: 50%; opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .tl-item.visible { opacity: 1; transform: translateY(0); }
+        .tl-item:nth-child(odd) { left: 0; }
+        .tl-item:nth-child(even) { left: 50%; }
+        .tl-item::after { content: ''; position: absolute; width: 20px; height: 20px; right: -10px; background-color: var(--bg-color); border: 4px solid var(--discord-color); top: 15px; border-radius: 50%; z-index: 1; transition: 0.3s; }
+        .tl-item:nth-child(even)::after { left: -10px; }
+        .tl-item:hover::after { background-color: var(--neon-accent); border-color: var(--bg-color); box-shadow: 0 0 15px var(--neon-accent); }
+        .tl-content { padding: 20px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; position: relative; backdrop-filter: blur(5px); }
+        .tl-content h2 { font-family: 'Poppins', sans-serif; font-size: 1.2rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .crown-item .tl-content { background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(20, 22, 30, 0.9)); border: 1px solid rgba(255, 215, 0, 0.3); }
+        .crown-item h2 { color: var(--gold-accent); font-weight: 900; font-size: 1.5rem; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+
+        /* Animations */
+        @keyframes glow { from { text-shadow: 0 0 10px rgba(0,255,204,0.2); } to { text-shadow: 0 0 20px rgba(0,255,204,0.6), 0 0 30px rgba(88,101,242,0.4); } }
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(88, 101, 242, 0); } 100% { box-shadow: 0 0 0 0 rgba(88, 101, 242, 0); } }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .timeline::after { left: 31px; }
+            .tl-item { width: 100%; padding-left: 70px; padding-right: 25px; }
+            .tl-item:nth-child(even) { left: 0%; }
+            .tl-item::after, .tl-item:nth-child(even)::after { left: 21px; }
+            .glitch-title { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles"></canvas>
+
+    <div class="container">
+        <section class="hero">
+            <h1 class="glitch-title">AYA</h1>
+            <p class="subtitle">ULG Roleplay Server Owner</p>
+            <div class="typewriter-box" id="typewriter"></div>
+        </section>
+
+        <div class="discord-wrapper">
+            <div class="discord-card">
+                <div class="discord-banner"></div>
+                <div class="discord-avatar-wrapper">
+                    <img src="aya.jpg" alt="Aya Avatar" class="discord-avatar" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                    <div class="status-dot"></div>
+                </div>
+                <div class="discord-badges">
+                    <div class="badge" title="HypeSquad Bravery"><i class="fa-solid fa-fire"></i></div>
+                    <div class="badge" title="Active Developer"><i class="fa-solid fa-code"></i></div>
+                </div>
+                <div class="discord-info">
+                    <div class="d-name">AYA <i class="fa-solid fa-circle-check" style="color: var(--discord-color); font-size: 0.9rem;"></i></div>
+                    <div class="d-user">a.yy.a</div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="d-section">
+                        <h3>About Me</h3>
+                        <div class="d-desc"><span><i class="fa-solid fa-cake-candles" style="color: #ed4245; margin-right: 5px;"></i> Age</span> <span>23</span></div>
+                        <div class="d-desc"><span><i class="fa-solid fa-gamepad" style="color: var(--discord-color); margin-right: 5px;"></i> In-Game</span> <span>Emma_Carlin</span></div>
+                        <div class="d-desc"><span><i class="fa-solid fa-id-card" style="color: var(--text-muted); margin-right: 5px;"></i> User ID</span> <span style="font-family: 'Poppins', monospace; font-size: 0.8rem;">852632104034762762</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="rank-badge">#2</div>
+                <i class="fa-solid fa-sack-dollar stat-icon"></i>
+                <h3 class="stat-title">Wealth / Money</h3>
+                <div class="stat-value" data-target="128315553" data-prefix="$">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="rank-badge">#1</div>
+                <i class="fa-solid fa-clock stat-icon"></i>
+                <h3 class="stat-title">Playtime / Hours</h3>
+                <div class="stat-value" data-target="10372" data-prefix="">0</div>
+            </div>
+        </div>
+
+        <div class="timeline-section">
+            <h2 class="section-title">رحلـــــة الكفـــــاح</h2>
+            <div class="timeline" id="timeline">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Core Logic - Encapsulated IIFE Pattern
+         * Advanced execution environment protecting internal variables.
+         */
+        (function(_0xApp){
+            const _doc = document, _win = window;
+            
+            // Configuration Data
+            const _data = {
+                twText: "> Initializing ULG Database... Profile Found: Server Owner.",
+                ranks: [
+                    "Tester support", "Trial Support", "Support", 
+                    "Trial Admin", "Admin", "Senior Admin", 
+                    "Lead Admin", "Supervisor", "Head Admin", 
+                    "Vice founder", "Server control", "Server Founder", 
+                    "Server Owner"
+                ]
+            };
+
+            // 1. Typewriter Effect Logic
+            const _typeWriter = (_target, _txt, _speed) => {
+                let _i = 0;
+                _target.innerHTML = '';
+                const _t = setInterval(() => {
+                    if (_i < _txt.length) {
+                        _target.innerHTML += _txt.charAt(_i);
+                        _i++;
+                    } else clearInterval(_t);
+                }, _speed);
+            };
+
+            // 2. Build Timeline Dynamically
+            const _buildTimeline = () => {
+                const _tl = _doc.getElementById('timeline');
+                _data.ranks.forEach((_r, _idx) => {
+                    let _div = _doc.createElement('div');
+                    _div.className = `tl-item ${_idx === _data.ranks.length - 1 ? 'crown-item' : ''}`;
+                    _div.innerHTML = `
+                        <div class="tl-content">
+                            <h2>${_idx === _data.ranks.length - 1 ? '<i class="fa-solid fa-crown" style="color:var(--gold-accent); margin-right:8px;"></i> ' : ''}${_r}</h2>
+                        </div>
+                    `;
+                    _tl.appendChild(_div);
+                });
+            };
+
+            // 3. Counting Animation Logic (Easing)
+            const _animateCounters = (_el) => {
+                const _target = +_el.getAttribute('data-target');
+                const _prefix = _el.getAttribute('data-prefix');
+                const _duration = 2500;
+                const _start = performance.now();
+                
+                const _update = (_currentTime) => {
+                    const _elapsed = _currentTime - _start;
+                    const _progress = Math.min(_elapsed / _duration, 1);
+                    // Ease out expo formula
+                    const _ease = _progress === 1 ? 1 : 1 - Math.pow(2, -10 * _progress);
+                    const _currentCount = Math.floor(_target * _ease);
+                    
+                    _el.innerText = _currentCount.toLocaleString('en-US') + _prefix;
+                    
+                    if (_progress < 1) requestAnimationFrame(_update);
+                    else _el.innerText = _target.toLocaleString('en-US') + _prefix;
+                };
+                requestAnimationFrame(_update);
+            };
+
+            // 4. Scroll Intersection Observer (Advanced UI reveal)
+            const _initObserver = () => {
+                const _obs = new IntersectionObserver((_entries) => {
+                    _entries.forEach(_e => {
+                        if (_e.isIntersecting) {
+                            if (_e.target.classList.contains('tl-item')) {
+                                _e.target.classList.add('visible');
+                            }
+                            if (_e.target.classList.contains('stat-value') && !_e.target.dataset.counted) {
+                                _animateCounters(_e.target);
+                                _e.target.dataset.counted = "true";
+                            }
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+                _doc.querySelectorAll('.tl-item, .stat-value').forEach(_el => _obs.observe(_el));
+            };
+
+            // 5. Canvas Particles (Network/Tech vibe)
+            const _initCanvas = () => {
+                const _c = _doc.getElementById('particles');
+                const _ctx = _c.getContext('2d');
+                let _w = _c.width = _win.innerWidth;
+                let _h = _c.height = _win.innerHeight;
+                let _p = [];
+
+                window.addEventListener('resize', () => {
+                    _w = _c.width = _win.innerWidth;
+                    _h = _c.height = _win.innerHeight;
+                });
+
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * _w;
+                        this.y = Math.random() * _h;
+                        this.vx = (Math.random() - 0.5) * 0.5;
+                        this.vy = (Math.random() - 0.5) * 0.5;
+                        this.size = Math.random() * 2;
+                    }
+                    update() {
+                        this.x += this.vx; this.y += this.vy;
+                        if (this.x < 0 || this.x > _w) this.vx = -this.vx;
+                        if (this.y < 0 || this.y > _h) this.vy = -this.vy;
+                    }
+                    draw() {
+                        _ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                        _ctx.beginPath();
+                        _ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        _ctx.fill();
+                    }
+                }
+
+                for(let i=0; i<50; i++) _p.push(new Particle());
+
+                const _animLoop = () => {
+                    _ctx.clearRect(0, 0, _w, _h);
+                    _p.forEach(p => { p.update(); p.draw(); });
+                    requestAnimationFrame(_animLoop);
+                };
+                _animLoop();
+            };
+
+            // Bootloader
+            _win.onload = () => {
+                _buildTimeline();
+                _typeWriter(_doc.getElementById('typewriter'), _data.twText, 50);
+                setTimeout(_initObserver, 100);
+                _initCanvas();
+            };
+
+        })(window);
+    </script>
+</body>
+</html>
